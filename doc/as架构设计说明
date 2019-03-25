@@ -1,19 +1,15 @@
 1.简介
-  aerospike是高效的nosql数据库，采用纯内存或者内存+ssd方案存储数据。
-  达到以下三个目的：
-  （1）数据的快速、高效存取。
-  （2）提供传统数据库的可靠性、健壮性、ACID能力。
-  （3）灵活、高扩展性、高容错能力。
-  
+aerospike是高效的nosql数据库，采用纯内存或者内存+ssd方案存储数据，设计初衷达到了以下三个主要目的：
+数据的快速、高效存取。
+提供传统数据库的可靠性、健壮性、ACID能力。
+灵活性、扩展性、容错能力。
 2.架构设计
-  采用三层架构设计：
-  Client Layer（客户端）层：实现as API直接与集群通信、跟踪节点，发现节点的上下线、知道数据在节点中的位置。
-  Clustering and Data Distribution Layer（集群和数据分发）层：管理集群、自动故障转移、高效分配任务、智能平衡数据、自动数据备份、数据迁移、
-  跨数据中心同步数据。
-  Data Storage Layer（数据存储）层：可靠地将数据存储到DRAM与FLASH中。
-  
-3.Distribution Layer
-  分发层旨在通过系统自动化所有集群管理功能，来最大程度的消除手动操作。
-  该层有三个重要模块
-  <1>Cluster Managerment Module（集群管理模块）：通过Paxos-base gossip-voting process算法来确认集群内节点，使集群中所有节点对当前集群成员身份
-  达成一致。
+as采用share nothing设计模式，在各个处理单元中使用自己私有的cpu以及memory，不存在共享资源，类似于MMP（大规模并行处理）模式，各处理单元之间通过协议通信，并行处理和扩展能力强（典型的类似案例还有hadoop等），各节点处理完数据后，处理结果可以向上层汇总，或者在节点之间流转；此外，as的架构设计主要可以分为三层：
+Client Layer（客户端）层：实现as API，直接与集群通信、跟踪节点，发现节点的上下线、知道数据在节点中的位置。
+Clustering and Data Distribution Layer（集群和数据分发）层：管理集群、自动故障转移、高效分配任务、智能平衡数据、自动数据备份、数据迁移、跨数据中心同步数据。
+Data Storage Layer（数据存储）层：可靠地将数据存储到DRAM与FLASH中。
+3.详细设计
+3.1 Distribution Layer
+分发层旨在通过系统自动化所有集群管理功能，来最大程度的消除手动操作，该层有三个重要模块：
+3.1.1 Cluster Managerment Module（集群管理模块）
+通过Paxos-base gossip-voting process算法来确认集群内节点，使集群中所有节点对当前集群成员身份达成一致（Paxos是一中在分布式设计中广泛使用的分布式一致性协议），同时通过heartbeat监控各个节点的状态。
