@@ -11,7 +11,7 @@ as采用**share nothing设计模式**，在各个处理单元中使用自己私�
 * **Data Storage Layer（数据存储）层**：可靠地将数据存储到DRAM与FLASH中。（***as架构图待补充***）
                                 
 # 3.详细设计
-## 3.1 Distribution Layer：
+## 3.1 Distribution Layer
 分发层旨在通过系统自动化所有集群管理功能，来最大程度的消除手动操作，该层有三个重要模块：
 ### 3.1.1 Cluster Managerment Module（集群管理模块）：
 **重点**：通过Paxos-base gossip-voting process算法来确认集群内节点，使集群中所有节点对当前集群成员身份达成一致（Paxos是一中在分布式设计中广泛使用的分布式一致性协议），同时通过heartbeat监控各个节点的状态。
